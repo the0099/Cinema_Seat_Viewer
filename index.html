@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Row 7 Cinemas</title>
+  <meta name="description" content="Demo κράτησης εισιτηρίων σινεμά με 3D προβολή της θέας από κάθε θέση.">
+  <link rel="stylesheet" href="styles.css">
+  <script type="importmap">
+    { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">7</span> Row 7 <small>Cinemas · Θεσσαλονίκη</small></div>
+    <nav class="steps" aria-label="Βήματα κράτησης">
+      <span class="step" data-step="1">1 · Ταινία</span>
+      <span class="step" data-step="2">2 · Θέσεις</span>
+      <span class="step" data-step="3">3 · Ολοκλήρωση</span>
+    </nav>
+  </header>
+
+  <main>
+    <!-- STEP 1: movies & showtimes -->
+    <section id="view-movies" class="view">
+      <div class="dates" id="dates" role="tablist" aria-label="Ημερομηνία"></div>
+      <div class="movies" id="movies"></div>
+    </section>
+
+    <!-- STEP 2: seat selection with 3D preview -->
+    <section id="view-seats" class="view" hidden>
+      <div class="show-head">
+        <button class="ghost" id="back-to-movies">← Πίσω</button>
+        <div>
+          <h2 id="show-title"></h2>
+          <p id="show-meta" class="muted"></p>
+        </div>
+      </div>
+
+      <div class="seat-layout">
+        <div class="panel map-panel">
+          <div class="screen-arc"><span>ΟΘΟΝΗ</span></div>
+          <div class="seatmap" id="seatmap"></div>
+          <ul class="legend">
+            <li><i class="s free"></i>Ελεύθερη</li>
+            <li><i class="s vip"></i>VIP</li>
+            <li><i class="s wheel"></i>ΑμεΑ</li>
+            <li><i class="s taken"></i>Κατειλημμένη</li>
+            <li><i class="s sel"></i>Επιλογή σας</li>
+          </ul>
+          <p class="hint">Περάστε τον κέρσορα (ή πατήστε) πάνω σε μια θέση για να δείτε την οθόνη από εκεί σε 3D.</p>
+        </div>
+
+        <div class="panel view-panel">
+          <div class="view-head">
+            <strong id="pv-seat">Θέση —</strong>
+            <span class="score" id="pv-score"></span>
+          </div>
+          <div class="viewport" id="viewport">
+            <div class="vp-overlay">
+              <button class="chip" id="btn-reset" title="Επαναφορά βλέμματος">⟲ Κοίτα την οθόνη</button>
+              <button class="chip" id="btn-people" aria-pressed="true">👥 Θεατές</button>
+              <button class="chip" id="btn-full" title="Πλήρης οθόνη">⛶</button>
+            </div>
+            <div class="vp-tip">Σύρετε για να κοιτάξετε γύρω · ← → ↑ ↓ αλλάζουν θέση</div>
+          </div>
+          <dl class="metrics" id="metrics"></dl>
+        </div>
+      </div>
+
+      <div class="cart panel">
+        <div>
+          <div class="muted">Επιλεγμένες θέσεις</div>
+          <div id="cart-seats" class="cart-seats">Καμία ακόμη</div>
+        </div>
+        <div class="cart-total">
+          <div class="muted">Σύνολο</div>
+          <div id="cart-total" class="total">0,00 €</div>
+        </div>
+        <button class="primary" id="btn-continue" disabled>Συνέχεια</button>
+      </div>
+    </section>
+
+    <!-- STEP 3: confirmation -->
+    <section id="view-done" class="view" hidden>
+      <div class="panel done">
+        <div class="tick">✓</div>
+        <h2>Η κράτηση ολοκληρώθηκε</h2>
+        <p id="done-text" class="muted"></p>
+        <p class="muted small">Demo — δεν έγινε πραγματική χρέωση.</p>
+        <button class="primary" id="btn-again">Νέα κράτηση</button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from './vendor/three.module.min.js'; // three@0.160.0, bundled locally
 import { HALL, eyePosition } from './hall.js';
 
 const HFOV_DEG = 80; // fixed horizontal field of view → screen size is comparable on any device

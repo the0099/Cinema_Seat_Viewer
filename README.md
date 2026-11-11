@@ -25,7 +25,7 @@ python3 -m http.server 8000
 # άνοιξε http://localhost:8000
 ```
 
-Το three.js φορτώνεται από το unpkg (`three@0.160.0`).
+Το three.js (`three@0.160.0`, MIT) περιλαμβάνεται στο `js/vendor/`, οπότε δεν φορτώνεται τίποτα από εξωτερικό CDN.
 
 ## Δομή
 - `index.html`, `styles.css` — UI

@@ -237,7 +237,8 @@ function ensureViewer() {
       console.error(err);
       const msg = document.createElement('div');
       msg.className = 'vp-empty';
-      msg.textContent = 'Η 3D προβολή δεν είναι διαθέσιμη σε αυτή τη συσκευή.';
+      msg.innerHTML = 'Η 3D προβολή δεν φόρτωσε.<br><small>' + String(err?.message || err).replace(/[<>&]/g, '') + '</small>';
+      msg.style.textAlign = 'center'; msg.style.padding = '16px';
       vp.appendChild(msg);
       return null;
     });

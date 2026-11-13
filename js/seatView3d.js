@@ -61,12 +61,22 @@ export class SeatView3D {
   setPeopleVisible(v) { this.showPeople = v; this.#updatePeople(); }
   resetLook() { this.targetYaw = 0; this.targetPitch = 0; }
 
+  dispose() {
+    this.renderer.setAnimationLoop(null);
+    this.resizeObserver.disconnect();
+    this.renderer.dispose();
+    this.renderer.domElement.remove();
+  }
+
   // ---------- scene construction ----------
 
   #buildRoom() {
     const h = this.hall;
-    const depth = h.firstRowDist + h.rows.length * h.rowDepth + 3;
-    const width = 22, height = h.screen.bottom + h.screen.height + 3 + h.rows.length * h.rise;
+    // works both for the built-in HALL and for layouts detected from another site's seat map
+    const rowCount = Math.max(...this.seats.map((s) => s.rowIndex)) + 1;
+    const maxX = Math.max(...this.seats.map((s) => Math.abs(s.x)), h.screen.width / 2);
+    const depth = Math.max(...this.seats.map((s) => s.z)) + 3;
+    const width = Math.max(22, 2 * maxX + 4), height = h.screen.bottom + h.screen.height + 3 + rowCount * h.rise;
     this.roomDepth = depth;
 
     const wallMat = new THREE.MeshStandardMaterial({ color: 0x1b1420, roughness: 0.95 });
@@ -91,7 +101,7 @@ export class SeatView3D {
     front.position.set(0, 0, h.firstRowDist / 2 - 0.5);
     this.scene.add(front);
     const stripMat = new THREE.MeshBasicMaterial({ color: 0xffb347 });
-    h.rows.forEach((_, r) => {
+    for (let r = 0; r < rowCount; r++) {
       const y = r * h.rise;
       const z0 = h.firstRowDist + r * h.rowDepth - h.rowDepth / 2;
       const step = new THREE.Mesh(new THREE.BoxGeometry(width, y + 0.02, depth - z0), stepMat);
@@ -103,7 +113,7 @@ export class SeatView3D {
         led.position.set(ax, y + 0.03, z0);
         this.scene.add(led);
       }
-    });
+    }
 
     // exit signs
     const exitMat = new THREE.MeshBasicMaterial({ color: 0x18d65a });
@@ -122,7 +132,8 @@ export class SeatView3D {
   }
 
   #aisleXs() {
-    // x positions of the two aisles, taken from the widest row
+    // x positions of the aisles, taken from the widest row (only known for the built-in hall)
+    if (!this.hall.rows?.[0]?.blocks) return [];
     const row = this.hall.rows.reduce((a, b) => (sum(b.blocks) > sum(a.blocks) ? b : a));
     const sw = this.hall.seatWidth, total = sum(row.blocks) * sw + (row.blocks.length - 1) * this.hall.aisle;
     const xs = []; let x = -total / 2;

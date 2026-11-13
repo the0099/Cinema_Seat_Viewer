@@ -33,8 +33,13 @@ export const HALL = {
 
 export const PRICES = { standard: 8.5, vip: 12, wheel: 8.5 };
 
-HALL.screen.height = HALL.screen.width / HALL.screen.aspect;
-HALL.screen.centerY = HALL.screen.bottom + HALL.screen.height / 2;
+/** Fill in derived screen sizes. Also used for halls detected from other sites. */
+export function finishHall(hall) {
+  hall.screen.height = hall.screen.width / hall.screen.aspect;
+  hall.screen.centerY = hall.screen.bottom + hall.screen.height / 2;
+  return hall;
+}
+finishHall(HALL);
 
 /** Build the flat list of seats with positions. */
 export function buildSeats(hall = HALL) {

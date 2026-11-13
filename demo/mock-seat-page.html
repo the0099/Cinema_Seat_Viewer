@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock seat selection</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #f3f3f6; margin: 0; padding: 24px 16px; }
+  h1 { font-size: 18px; }
+  .screen { margin: 16px auto 24px; width: 70%; text-align: center; border-top: 6px solid #999; padding-top: 6px; color: #666; letter-spacing: .3em; font-size: 12px; }
+  .seat-map { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .seat-map.bottom { flex-direction: column-reverse; }
+  .row { display: flex; gap: 4px; align-items: center; }
+  .row-label { width: 18px; text-align: center; color: #777; font-size: 12px; }
+  .gap { width: 22px; }
+  .seat { width: 22px; height: 20px; border-radius: 5px 5px 2px 2px; border: 0; background: #4a90d9; padding: 0; cursor: pointer; display: grid; place-items: center; }
+  .seat span { font-size: 9px; color: #fff; }
+  .seat.seat--sold { background: #c9c9cf; cursor: not-allowed; }
+  .seat.seat--selected { background: #e8a900; }
+  .legend { display: flex; gap: 16px; justify-content: center; margin-top: 24px; font-size: 12px; color: #555; }
+  .legend .seat { width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px; }
+</style>
+</head>
+<body>
+  <h1>Mock booking page — seat selection (test page for the extension)</h1>
+  <div class="screen" id="screen-top">ΟΘΟΝΗ</div>
+  <div class="seat-map" id="map"></div>
+  <div class="screen" id="screen-bottom" hidden>ΟΘΟΝΗ</div>
+  <div class="legend"><span><i class="seat"></i>Διαθέσιμη</span><span><i class="seat seat--sold"></i>Κατειλημμένη</span></div>
+<script>
+  // Builds the map a little later, like a real booking site loading data.
+  const bottom = location.search.includes('bottom');
+  if (bottom) { document.getElementById('screen-top').hidden = true; document.getElementById('screen-bottom').hidden = false; }
+  setTimeout(() => {
+    const map = document.getElementById('map');
+    if (bottom) map.classList.add('bottom');
+    const rows = 'ABCDEFGHIJ'.split('');
+    rows.forEach((r, ri) => {
+      const row = document.createElement('div'); row.className = 'row';
+      row.innerHTML = `<span class="row-label">${r}</span>`;
+      const blocks = ri < 2 ? [4, 8, 4] : [5, 10, 5];
+      let n = 1;
+      blocks.forEach((b, bi) => {
+        for (let i = 0; i < b; i++, n++) {
+          const sold = ((n * 7 + ri * 3) % 5) === 0;
+          row.insertAdjacentHTML('beforeend', `<button class="seat ${sold ? 'seat--sold' : 'seat--available'}" aria-label="Σειρά ${r}, Θέση ${n}"><span>${n}</span></button>`);
+        }
+        if (bi < blocks.length - 1) row.insertAdjacentHTML('beforeend', '<span class="gap"></span>');
+      });
+      row.insertAdjacentHTML('beforeend', `<span class="row-label">${r}</span>`);
+      map.appendChild(row);
+    });
+    map.addEventListener('click', (e) => { const s = e.target.closest('.seat:not(.seat--sold)'); if (s) s.classList.toggle('seat--selected'); });
+  }, 800);
+</script>
+</body>
+</html>
